@@ -2,34 +2,18 @@ FROM php:8.3-fpm
 
 
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    libonig-dev \
-    zip \
-    libzip-dev \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    curl && \
-    docker-php-ext-install pdo_mysql mbstring zip exif pcntl && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    # Clear cache
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+      apt-utils \
+      libpq-dev \
+      libpng-dev \
+      libzip-dev \
+      zip unzip \
+      git && \
+      docker-php-ext-install pdo_mysql && \
+      docker-php-ext-install bcmath && \
+      docker-php-ext-install gd && \
+      docker-php-ext-install zip && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Add user for laravel application
-RUN groupadd -g 1000 www && useradd -u 1000 -ms /bin/bash -g www www
-
-# Change current user to www
-USER www
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+COPY ./docker/backend/php.ini /usr/local/etc/php/conf.d/php.ini
