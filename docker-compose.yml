@@ -45,10 +45,11 @@ services:
     image: nginx:alpine
     restart: unless-stopped
     tty: true
+    
     ports:
       - "80:80" # Внутренний порт контейнера пробрасываем на host машину
     volumes:
-      - .:/var/www # Монтируем локальную папку в контейнер как /var/www
+      - .:/var/www/vendor # Монтируем локальную папку в контейнер как /var/www
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/ # Передаем в контейнер конфигурационные файлы nginx
     depends_on:
       - backend

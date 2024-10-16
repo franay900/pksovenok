@@ -137,7 +137,7 @@ return [
     | such as Memcached. You may define your connection settings here.
     |
     */
-
+    
     'redis' => [
 
         'client' => env('REDIS_CLIENT', 'phpredis'),
