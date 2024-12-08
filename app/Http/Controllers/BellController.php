@@ -17,7 +17,7 @@ class BellController extends Controller
      */
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
         $bells = Bell::where('organization_id', $organizationId)->get();
         return BellResource::collection($bells);
@@ -30,7 +30,7 @@ class BellController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
         $bell = Bell::create([
 
@@ -38,7 +38,7 @@ class BellController extends Controller
             'name' => $data['name']
         ]);
 
-        $bellId = $bell->id; 
+        $bellId = $bell->id;
         $lessons = Array();
         $dayCount = 0;
         $lessonCount = 0;
@@ -54,7 +54,7 @@ class BellController extends Controller
                     $timeBegin = date('H:i', strtotime($timePartsBegin[1]));
                     $timeEnd = date('H:i', strtotime($timePartsEnd[1]));
                     BellLesson::create([
-                        'day' => $dayCount, 
+                        'day' => $dayCount,
                         'number' => $lessonCount,
                         'begin' => $timeBegin,
                         'end' => $timeEnd,
@@ -62,9 +62,9 @@ class BellController extends Controller
                     ]);
                     $lessons[] = $dayCount;
                     $lessons[] = $timeBegin;
-                   
+
                 }
-                
+
             }
         }
         return response($lessons);
@@ -77,13 +77,13 @@ class BellController extends Controller
     {
         $bellId = $bell->id;
         $lessons = BellLesson::where('bell_id', $bellId)->get();
-      
+
         return response()->json([
             'data' => [
-                'name' => $bell->name, 
+                'name' => $bell->name,
                 'lessons' => $lessons
             ]
-        ]); 
+        ]);
     }
 
     /**

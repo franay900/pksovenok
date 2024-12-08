@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('loads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_id')->constrained();
-            $table->foreignId('subgroup_id')->constrained()->nullable();
+            $table->foreignId('subgroup_id')->nullable()->constrained();
             $table->foreignId('subject_id')->constrained();
             $table->foreignId('teacher_id')->constrained('users');
             $table->timestamps();

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TimetableController;
+use App\Http\Controllers\TimetableLessonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\StoreController;
@@ -20,7 +22,7 @@ use App\Http\Controllers\YearController;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Models\Year;
 
-Route::group(['prefix' => 'users', 'middleware' => 'jwt.auth'], function(){
+Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], function(){
     Route::post('/', StoreController::class);
     Route::get('/', IndexController::class);
     Route::patch('/{user}', UpdateController::class);
@@ -48,10 +50,18 @@ Route::resource('period', PeriodController::class);
 
 Route::resource('subject', SubjectController::class);
 
-Route::resource('group', GroupController::class);
+Route::resource('group', GroupController::class)->middleware('auth:sanctum' );
 
 Route::resource('period_type', PeriodTypeController::class);
 
 Route::resource('subgroup', SubgroupController::class);
 
 Route::resource('load', LoadController::class);
+
+Route::resource('timetable', TimetableController::class);
+
+Route::resource('timetable_lesson', TimetableLessonController::class);
+
+Route::get('period_types_by_group/{group}', [PeriodTypeController::class, 'getPeriodTypesByGroup']);
+
+Route::get('groups/loads/{group}', [GroupController::class, 'getGroupLoads'])->middleware('auth:sanctum');

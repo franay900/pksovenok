@@ -15,12 +15,8 @@ const router = createRouter({
                 },
 
 
-                {
-                    path: '/pages/crud',
-                    name: 'crud',
-                    component: () => import('@/views/pages/Crud.vue')
-                },
- 
+
+
             ]
         },
 
@@ -41,7 +37,7 @@ const router = createRouter({
                 },
 
 
- 
+
             ]
         },
 
@@ -67,7 +63,7 @@ const router = createRouter({
                     name: 'bells.show',
                     component: () => import('@/views/bells/Show.vue')
                 },
-               
+
             ]
         },
 
@@ -81,8 +77,8 @@ const router = createRouter({
                     component: () => import('@/views/periods/Index.vue')
                 },
 
-      
-               
+
+
             ]
         },
 
@@ -103,12 +99,12 @@ const router = createRouter({
                 },
 
 
- 
+
             ]
         },
 
         {
-            path: '/class',
+            path: '/student',
             component: AppLayout,
             children: [
                 {
@@ -117,7 +113,7 @@ const router = createRouter({
                     component: () => import('@/views/students/Index.vue')
                 },
 
- 
+
             ]
         },
 
@@ -132,7 +128,7 @@ const router = createRouter({
                     component: () => import('@/views/subjects/Index.vue')
                 },
 
- 
+
             ]
         },
 
@@ -146,10 +142,50 @@ const router = createRouter({
                     component: () => import('@/views/load/Index.vue')
                 },
 
- 
+
             ]
         },
-        
+
+
+        {
+            path: '/timetable',
+            component: AppLayout,
+            children: [
+                {
+                    path: '/timetable',
+                    name: 'timetable.index',
+                    component: () => import('@/views/timetables/Index.vue')
+                },
+                {
+                    path: '/timetable/templates/:id',
+                    name: 'timetable.templates',
+                    component: () => import('@/views/timetables/Templates.vue')
+                },
+
+                {
+                    path: '/timetable/create/:id',
+                    name: 'timetable.create',
+                    component: () => import('@/views/timetables/Create.vue')
+                }
+
+            ]
+        },
+
+
+        {
+            path: '/timetable',
+            component: AppLayout,
+            children: [
+                {
+                    path: '/journal',
+                    name: 'journal.organization',
+                    component: () => import('@/views/journal/Organization.vue')
+                },
+
+
+            ]
+        },
+
         {
           path: '/login/',
           name: 'login',
@@ -170,20 +206,20 @@ const router = createRouter({
 });
 
 
-router.beforeEach((to,from, next) => {
-
-    const access_token = localStorage.getItem('access_token')
-
-    if (to.name !== 'login') {
-        if(!access_token){
-            return next({name:'login'})
-        }
-    }
-    if (to.name === 'login' && access_token){
-        return next({name:'dashboard'})
-    }
-
-    next()
-})
+// router.beforeEach((to,from, next) => {
+//
+//     const token = localStorage.getItem('x_xsrf_token')
+//
+//     if (to.name !== 'login') {
+//         if(!token){
+//             return next({name:'login'})
+//         }
+//     }
+//     if (to.name === 'login' && token){
+//         return next({name:'dashboard'})
+//     }
+//
+//     next()
+// })
 
 export default router;

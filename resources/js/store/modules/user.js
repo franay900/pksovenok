@@ -1,4 +1,4 @@
-import api from '../../api';
+import axios from 'axios';
 
 const state = {
     users: null,
@@ -16,22 +16,22 @@ const getters = {
 
 const actions = {
     getUsers({commit}){
-        api.get('users')
+        axios.get('api/users')
         .then(res => {
-            
+
            commit('setUsers', res.data.data)
-          
+
         })
         .catch(error => {
             console.error(error);
-           
+
         })
 
     },
     getUser({state,commit,dispatch}, id){
-        api.get(`users/${id}`)
+        axios.get(`users/${id}`)
         .then(res => {
-            
+
             commit('setUser', res.data.data)
 
             commit('setselectedRoles', res.data.data.roles)
@@ -40,7 +40,7 @@ const actions = {
 
     getRoles({state,commit,dispatch}){
 
-        api.get('roles')
+        axios.get('roles')
         .then(res=>{
             commit('setRoles', res.data)
         }
@@ -63,7 +63,7 @@ const mutations = {
     },
 
     setselectedRoles(state, userRoles){
-        
+
         state.selectedRoles = userRoles
     }
 }
@@ -87,7 +87,7 @@ export default {
 
 // const actions = {
 //     getUser({state, commit, dispatch}, id){
-//         axios.get('/api/users/' + id)
+//         axios.get('/axios/users/' + id)
 //             .then( res => {
 
 //                 commit('setUser', res.data.data)
@@ -97,7 +97,7 @@ export default {
 //     },
 
 //     getUsers({commit}) {
-//         axios.get('/api/users')
+//         axios.get('/axios/users')
 //             .then(res => {
 //                 commit('setUsers', res.data.data);
 
@@ -105,14 +105,14 @@ export default {
 //     },
 
 //     deleteUser({dispatch},id) {
-//         axios.delete('/api/users/' + id)
+//         axios.delete('/axios/users/' + id)
 //             .then(res => {
 //                 dispatch('getUsers');
 //             })
 //     },
 
 //     updateUser({}, data) {
-//         axios.patch('/api/users/' + data.id, {name: data.name, surname: data.surname})
+//         axios.patch('/axios/users/' + data.id, {name: data.name, surname: data.surname})
 //             .then(res => {
 
 //                 router.push({name: 'user.show', params: {id: data.id} })
@@ -120,7 +120,7 @@ export default {
 //     },
 
 //     store({}, data){
-//         axios.post('/api/users', {name: data.name, surname: data.surname})
+//         axios.post('/axios/users', {name: data.name, surname: data.surname})
 //             .then( res => {
 //                 router.push({name: 'user.index'})
 

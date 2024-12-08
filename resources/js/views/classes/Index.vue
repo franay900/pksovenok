@@ -30,14 +30,15 @@ export default {
     getOrganizationInfo() {
       api.get('group')
         .then(res => {
-          this.periods = res.data.periods; // Теперь this.periods определен
-          this.teachers = res.data.teachers.map(teacher => ({
-            ...teacher, 
+            console.log(res.data);
+            this.periods = res.data.periods; // Теперь this.periods определен
+            this.teachers = res.data.teachers.map(teacher => ({
+            ...teacher,
             fullName: `${teacher.surname} ${teacher.surname} ${teacher.patronymic}` // Добавляем поле fullName
-          }));
-       
-          this.groups = res.data.groups
-         
+            }));
+
+            this.groups = res.data.groups
+
         })
         .catch(error => {
           console.error(error);
@@ -46,13 +47,13 @@ export default {
 
     createClass(){
 
-        api.post('group', 
+        api.post('group',
         {number: this.selectedNumber, letter: this.letter, manager_id: this.selectedTeacher.id, period_type_id: this.selectedPeriod.id, bell_id: this.selectedBell.id})
         .then(res => {
             this.visible = false
             this.getOrganizationInfo()
         })
-        
+
     }
   },
 };
@@ -67,8 +68,8 @@ export default {
     <div v-if="groups"  class="card flex flex-col gap-4">
         <div class="font-semibold text-xl">Классы</div>
 
-     
-        <DataTable   :value="groups" sortMode="multiple" tableStyle="min-width: 50rem" >
+
+        <DataTable   :value="groups" sortMode="multiple" tableStyle="min-width: 50rem"  show>
             <Column selectionMode="multiple" style="" :exportable="false" >
             </Column>
             <Column field="id" header="id" sortable style="width: 5%"  :hidden="true"></Column>
@@ -93,11 +94,11 @@ export default {
     <Dialog v-model:visible="visible" modal header="Добавление класса"  :style="{ width: '750px' }">
 
         <div class="flex flex-col gap-6">
-            
+
             <div>
                 <label for="name" class="block  mb-3">Номер</label>
                 <Select id="inventoryStatus" :options="numbers"  v-model="selectedNumber" placeholder="Выберите номер" fluid></Select>
-                
+
             </div>
             <div>
                 <label for="description" class="block mb-3">Буква</label>
@@ -118,8 +119,8 @@ export default {
                 <Select id="inventoryStatus" :options="periods" v-model="selectedPeriod" optionLabel="name_many" placeholder="Выберите периоды" fluid></Select>
             </div>
         </div>
-        
-        
+
+
         <div class="flex justify-end gap-2 mt-3">
             <Button type="button" label="Отмена" severity="secondary" @click="visible = false"></Button>
             <Button type="button" label="Добавить" @click="createClass"></Button>

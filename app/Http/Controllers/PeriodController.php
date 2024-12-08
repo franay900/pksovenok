@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use DateTime;
 use DateTimeZone;
 use App\Models\Period;
@@ -18,7 +19,7 @@ class PeriodController extends BaseController
      */
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
 
         return response()->json(Period::where('organization_id', $organizationId)->get());
@@ -31,7 +32,7 @@ class PeriodController extends BaseController
     public function store(StoreRequest $request)
     {
         $response = $this->service->store($request->validated());
-        
+
         return response()->json($response);
 
     }
@@ -60,4 +61,6 @@ class PeriodController extends BaseController
     {
         //
     }
+
+
 }

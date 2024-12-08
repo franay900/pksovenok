@@ -9,4 +9,10 @@ class Organization extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'short_name'];
+
+
+    public function year(){
+        return $this->belongsTo(Year::class);
+    }
+
 }

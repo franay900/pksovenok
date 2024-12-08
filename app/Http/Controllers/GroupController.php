@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Group\StoreRequest;
 use App\Http\Resources\Group\GroupResource;
+use App\Http\Resources\Load\LoadResource;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Organization;
 use App\Models\Period;
 use App\Models\PeriodType;
+use App\Services\GroupSerivce;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -17,45 +19,20 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public $service;
+    public function __construct(GroupSerivce $groupSerivce)
+    {
+        $this->service = $groupSerivce;
+    }
+
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        $organizationId = $user->organization_id;
-        $periodsAll = Period::where('organization_id', $organizationId)->get();
-        $periods = [];
-        $teachers = User::getTeachersByOrganization($organizationId);
-        $groups = Group::where('organization_id', $organizationId)
-                ->with('manager:id,surname,name,patronymic', 'periodType:id,name', 'bell:id,name')
-                ->orderBy('number', 'asc')
-                ->orderBy('letter', 'asc')
-                ->get();
-        $groups->transform(function ($group) {
-            $group->manager_full_name = $group->manager ? 
-                $group->manager->surname . ' ' . $group->manager->name . ' ' . $group->manager->patronymic : 
-                null;
-    
-            return $group;
-        });
-        
+        $user = auth()->user();
 
-        foreach ($periodsAll as $period) {
-            $periodTypeId = $period['period_type_id'];
-        
-            // Проверка, есть ли уже тип периода в массиве (по индексу периода)
-            if (!isset($periods[$periodTypeId])) {
-                $periodType = PeriodType::find($periodTypeId);
-                
-                // Добавляем тип периода в массив как объект, используя ID как индекс
-                $periods[$periodTypeId] = $periodType;
-            }
-        }
-        return response()->json([
-            'periods' => array_values($periods),
-            'teachers' => $teachers,
-            'groups' => $groups
-        ]);
+        return response()->json($this->service->index($user));
 
-        
+
     }
 
     /**
@@ -64,21 +41,7 @@ class GroupController extends Controller
     public function store(StoreRequest $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $organizationId = $user->organization_id;
-        $yearId = Organization::find($organizationId) -> year_id;
-        $data = $request->validated();
-
-        Group::create([
-            'number' => $data['number'],
-            'letter' => $data['letter'],
-            'organization_id' => $organizationId,
-            'year_id' => $yearId,
-            'manager_id' => $data['manager_id'],
-            'period_type_id' => $data['period_type_id'],
-            'bell_id' => $data['bell_id']
-
-        ]);
-
+        $this->service->store($user, $request);
         return response()->json(['ok']);
 
 
@@ -106,5 +69,10 @@ class GroupController extends Controller
     public function destroy(Group $group)
     {
         //
+    }
+
+    public function getGroupLoads(Group $group)
+    {
+        return LoadResource::collection($group->loads);
     }
 }

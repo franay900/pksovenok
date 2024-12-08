@@ -11,14 +11,12 @@ import { useToast } from 'primevue/usetoast';
 export default {
     data() {
         return {
-            
+
             visible: null,
             numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
             selectedClass: null,
-            periods: [],
             selectedPeriod: null,
             selectedBell: null,
-            teachers: null,
             selectedTeacher: null,
             selectedNumber: null,
             letter: null,
@@ -52,7 +50,7 @@ export default {
             return this.$store.getters.subjects
         },
 
-        
+
     },
     mounted() {
         this.$store.dispatch('getBells');
@@ -61,9 +59,9 @@ export default {
         this.$store.dispatch('getSubjects')
         this.getSubgroups()
     },
- 
+
     methods: {
-        
+
         createSubgroup(){
             api.post('subgroup', {name: this.subgroupName, subject_id: this.selectedSubject.id, group_id: this.group.id})
             .then(res=> {
@@ -71,14 +69,14 @@ export default {
 
                 this.getSubgroups()
                 this.toast.add(
-                    { severity: 'info', summary: 'Сохранено', 
-                    detail: `Создана подгруппа "${this.subgroupName} для предмета ${this.selectedSubject.short_name}`, 
+                    { severity: 'info', summary: 'Сохранено',
+                    detail: `Создана подгруппа "${this.subgroupName} для предмета ${this.selectedSubject.short_name}`,
                     life: 3000 });
             })
         },
 
         getSubgroups(){
-            
+
             api.get(`subgroup/${this.$route.params.id}`)
             .then(res => {
                 this.subgroups = res.data
@@ -87,8 +85,8 @@ export default {
 
 
     },
-    
-    
+
+
 
 }
 
@@ -98,20 +96,20 @@ export default {
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
 
         </div>
-        
-       
-        
+
+
+
         <div  class="card flex flex-col gap-4" v-if="group">
             <div class="font-semibold text-xl">{{ group.number }}{{ group.letter }} класс</div>
             <Tabs value="0" >
                 <TabList>
                     <Tab value="0">Информация</Tab>
                     <Tab value="1">Подгруппы</Tab>
-                
+
                 </TabList>
                 <TabPanels>
                     <TabPanel value="0">
-                        
+
                         <div class="grid grid-cols-12 gap-2">
                             <label for="surname" class="flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0">Номер</label>
                             <div class="col-span-12 md:col-span-10">
@@ -124,7 +122,7 @@ export default {
                                 <InputText id="name"  type="text"   fluid v-model="group.letter"/>
                             </div>
                         </div>
-            
+
                         <div class="grid grid-cols-12 gap-2 mt-3">
                             <label for="surname" class="flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0">Звонки</label>
                             <div class="col-span-12 md:col-span-10">
@@ -150,24 +148,24 @@ export default {
 
 
                         <DataTable   :value="subgroups" sortMode="multiple" tableStyle="min-width: 50rem" >
-                            
+
                             <Column  header="№" sortable   style="width: 5%;">
                                 <template #body="slotProps">
                                     {{ slotProps.index + 1  }}
                                 </template>
-                                
+
                             </Column>
                             <Column field="subgroup_name" header="Наименование" sortable   ></Column>
-                           
+
                             <Column field="subject_name" header="Предмет" sortable   ></Column>
-                
+
                         </DataTable>
-                        
+
                         <Button type="button" class="mt-3"  label="Добавить подгруппу" @click="visible = true" ></Button>
 
 
                         <Dialog v-model:visible="visible" modal header="Добавление подгруппы" :style="{ width: '35rem' }">
-                           
+
                             <div class="flex items-center gap-4 mb-4">
                                 <label for="subject" class="font-semibold w-24">Предмет</label>
                                 <Select id="subject" :options="subjects"    v-model="selectedSubject" optionLabel="name"  class="w-full md:w-56"></Select>
@@ -182,14 +180,14 @@ export default {
                             </div>
                         </Dialog>
                     </TabPanel>
-                
+
                 </TabPanels>
             </Tabs>
-           
+
 
         </div>
-   
-       
+
+
 
 </template>
 

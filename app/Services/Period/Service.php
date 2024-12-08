@@ -13,7 +13,7 @@ class Service {
 
     public function store($data){
         $periodsTypes = $data['periods'];
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
         $yearId = 1;
         foreach($periodsTypes as $periodType){
@@ -22,23 +22,23 @@ class Service {
             $periods = $periodType['periods'];
             $number = 1;
             foreach($periods as $period){
-                
+
                if(!isset($period['begin'])){
                     break;
                }
                $begin =  (new DateTime($period['begin'], new DateTimeZone('UTC')))
                     ->setTimezone(new DateTimeZone('Europe/Moscow'))
-                    ->format('d.m.Y');; 
+                    ->format('d.m.Y');;
                $end =  (new DateTime($period['end'], new DateTimeZone('UTC')))
                     ->setTimezone(new DateTimeZone('Europe/Moscow'))
-                    ->format('d.m.Y');; 
+                    ->format('d.m.Y');;
                $existingPeriod = Period::where('organization_id', $organizationId)
                     ->where('number', $number)
                     ->where('period_type_id', $periodTypeId)
                     ->first();
 
                 if ($existingPeriod) {
-                    
+
                     $existingPeriod->update([
                         'begin' => $begin,
                         'end' => $end,
@@ -59,6 +59,6 @@ class Service {
 
 
     }
-    
+
 
 }

@@ -30,10 +30,10 @@ class LoadController extends Controller
         ->where('subgroup_id', $data['subgroup_id'])
         ->where('subject_id', $data['subject_id'])
         ->first();
-       
+
         if ($existingLoad){
             $existingLoad->update(['teacher_id' => $data['teacher_id']]);
-        } 
+        }
         else {
             Load::create($data);
         };
@@ -49,7 +49,7 @@ class LoadController extends Controller
         $subgroups = Subgroup::where('group_id', $group)->get();
         $loads = Load::where('group_id', $group)->get();
 
-        
+
         return response()->json([
             'subgroups' => $subgroups,
             'loads' => LoadResource::collection($loads)

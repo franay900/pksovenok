@@ -16,14 +16,18 @@ const getters = {
 }
 
 const actions = {
-    
+
     getGroupsByOrganization({commit}){
 
         api.get('group')
         .then(res => {
 
-            commit('setGroups', res.data.groups)
-            commit('setTeachers', 
+            commit('setGroups',
+                res.data.groups.map(group => ({
+                    ...group,
+                    group_name: `${group.number}${group.letter}`
+                })))
+            commit('setTeachers',
                 res.data.teachers.map(teacher => ({
                     ...teacher,
                     fullName: `${teacher.surname} ${teacher.name} ${teacher.patronymic}` // Добавляем поле fullName
@@ -36,7 +40,7 @@ const actions = {
     getGroup({commit}, id){
         api.get(`group/${id}`)
         .then(res => {
-            
+
 
             commit('setGroup', res.data.data)
         })
@@ -49,7 +53,7 @@ const mutations = {
     },
     setGroup(state,group){
         let teacher = group.manager
-        group.manager.fullName = `${teacher.surname} ${teacher.surname} ${teacher.patronymic}` 
+        group.manager.fullName = `${teacher.surname} ${teacher.surname} ${teacher.patronymic}`
         state.group = group
     },
     setTeachers(state,teachers){

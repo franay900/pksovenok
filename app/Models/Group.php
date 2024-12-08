@@ -23,7 +23,7 @@ class Group extends Model
     {
         return $this->belongsTo(User::class, 'manager_id');
     }
-    
+
     public function periodType()
     {
         return $this->belongsTo(PeriodType::class, 'period_type_id');
@@ -33,5 +33,15 @@ class Group extends Model
     {
         return $this->belongsTo(Bell::class, 'bell_id');
     }
-    
+
+
+    public function periods()
+    {
+        return $this->hasManyThrough(Period::class, PeriodType::class, 'id', 'period_type_id', 'period_type_id');
+    }
+
+    public function loads()
+    {
+        return $this->hasMany(Load::class, 'group_id');
+    }
 }

@@ -16,17 +16,21 @@ export default {
 
     methods: {
        login(){
-            axios.post('/api/auth/login', {username: this.username, password:this.password})
-            .then(res=>{
-            
-                localStorage.access_token = res.data.access_token
-                this.$router.push({name: 'dashboard'})
+            axios.get('sanctum/csrf-cookie').
+                then(res => {
+                axios.post('', {username: this.username, password:this.password})
+                    .then(res=>{
+
+
+                        this.$router.push({name: 'dashboard'})
+                    })
+                    .catch(error =>{
+                        this.invalidLogin = true;
+                        console.error(error)
+                    })
             })
-            .catch(error =>{
-                this.invalidLogin = true;
-                console.error(error)
-            })
-       } 
+
+       }
     },
 }
 
@@ -39,7 +43,7 @@ export default {
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full bg-surface-0  py-20 px-8 sm:px-20" style="border-radius: 53px">
                     <div class="text-center mb-8">
-                        <img src="/img/logo.jpg" alt="Girl in a jacket" 
+                        <img src="/img/logo.jpg" alt="Girl in a jacket"
                         style="width: 40px; height:40px;border-radius:50%;margin-left: auto;
                         margin-right: auto;
                         ">
@@ -56,10 +60,10 @@ export default {
                         <Password id="password1" v-model="password" placeholder="Пароль" :toggleMask="true" class="mb-4" fluid :feedback="false" :invalid="invalidLogin" @keyup.enter="login"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                           
+
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Забыли пароль?</span>
                         </div>
-            
+
                         <Button label="Войти"   @click="login"></Button>
                     </div>
                 </div>

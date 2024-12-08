@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
         return [
             'subject_id' => 'required',
             'group_id' => 'required',
-            'subgroup_id' => '',
+            'subgroup_id' => 'nullable',
             'teacher_id' => 'required'
         ];
     }

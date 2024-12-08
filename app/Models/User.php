@@ -3,14 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -50,28 +51,12 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
 
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_users');
     }
 
-    // Метод для проверки наличия определенной роли
     public function hasRole($role)
     {
         return $this->roles->contains('name', $role);
@@ -92,14 +77,14 @@ class User extends Authenticatable implements JWTSubject
         if (is_null($this->roles)) {
             return false; // Пользователь не имеет ни одной роли
         }
-    
+
         foreach ($this->roles as $role) {
 
             if (!is_null($role->permissions) && $role->permissions->contains('key', $permissionKey)) {
                 return true;
             }
         }
-    
+
         return false;
     }
 }

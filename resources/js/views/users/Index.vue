@@ -1,7 +1,7 @@
 <script>
 
 import axios from 'axios';
-import api from '../../api';
+
 import { RouterLink } from 'vue-router';
 
 
@@ -9,7 +9,7 @@ import { RouterLink } from 'vue-router';
 export default {
     data() {
         return {
-            
+
             visible: null,
             icondisplay: null,
             name: null,
@@ -30,23 +30,23 @@ export default {
             }
     },
     mounted() {
-     
+
         this.$store.dispatch('getUsers')
         this.getRoles()
     },
- 
+
     methods: {
-        
+
         addUser(){
             let roles = [];
             this.selectedRoles.forEach(element => {
                 roles.push(String(element.id))
             });
 
-            api.post('users', {name: this.name, surname: this.surname, patronymic: this.patronymic, username: this.username, roles:roles})
+            axios.post('api/users', {name: this.name, surname: this.surname, patronymic: this.patronymic, username: this.username, roles:roles})
             .then(res => {
                 // Обрабатываем успешный ответ
-               
+
                 this.visible = false
                 this.$store.dispatch('getUsers')
                 this.username = null
@@ -54,7 +54,7 @@ export default {
                 this.surname = null
                 this.patronymic = null
                 this.selectedRoles = null
-                
+
             })
             .catch(error => {
                 this.loginInValid = this.username
@@ -65,7 +65,7 @@ export default {
 
         getRoles(){
 
-            api.get('roles')
+            axios.get('api/roles')
             .then(res=>{
                 this.roles = res.data
             }
@@ -81,7 +81,7 @@ export default {
             this.selectedUser.forEach(element => {
                 users.push(element.id)
             });
-            api.delete('users',  {data: {ids: users}})
+            axios.delete('users',  {data: {ids: users}})
             .then(res => {
                 this.$store.dispatch('getUsers')
                 this.deleteUsersDialog = false
@@ -91,12 +91,12 @@ export default {
                 console.log(error)
             })
         }
-       
-    
+
+
 
     },
-    
-    
+
+
 
 }
 
@@ -134,11 +134,11 @@ export default {
         </Column>
 
     </DataTable>
-    
+
     </div>
 
     <Dialog v-model:visible="visible" modal header="Добавление сотрудника"  :style="{ width: '750px' }">
-        
+
         <div class="mt-1 mb-3" v-if="loginInValid">
             <Message severity="error">Логин {{ this.login }} уже используется. Попробуйте ввести другой</Message>
 
@@ -151,7 +151,7 @@ export default {
             <label for="name" class="font-semibold w-24">Имя</label>
             <InputText v-model="name" id="name" class="flex-auto" autocomplete="off"  />
         </div>
-        
+
 
         <div class="flex items-center gap-4 mb-8">
             <label for="patronymic" class="font-semibold w-24">Отчество</label>
@@ -167,7 +167,7 @@ export default {
         <div class="flex items-center gap-4 mb-8">
             <label for="username" class="font-semibold w-24">Логин</label>
             <InputText v-model="username" id="username" class="flex-auto" autocomplete="off" :invalid="loginInValid !== null" />
-           
+
 
         </div>
 
@@ -175,12 +175,12 @@ export default {
             <label for="username" class="font-semibold w-24">Роли</label>
             <MultiSelect v-model="selectedRoles" :options="roles" optionLabel="name" filter placeholder="Выберите роли"
                 :maxSelectedLabels="3" class="w-full md:w-80" />
-        
-           
+
+
 
         </div>
-        
-        
+
+
         <div class="flex justify-end gap-2">
             <Button type="button" label="Отмена" severity="secondary" @click="visible = false"></Button>
             <Button type="button" label="Добавить" @click="addUser"></Button>
@@ -195,7 +195,7 @@ export default {
         <template #footer>
             <Button   label="Нет" icon="pi pi-times" text  />
             <Button label="Да" icon="pi pi-check" text @click="deleteSelected" />
-            
+
         </template>
     </Dialog>
 

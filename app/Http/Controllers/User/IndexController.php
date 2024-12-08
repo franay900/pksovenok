@@ -13,7 +13,7 @@ class IndexController extends Controller
 {
     public function __invoke()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
         $users = User::where('organization_id', $organizationId)->get();
         return UserResource::collection($users);

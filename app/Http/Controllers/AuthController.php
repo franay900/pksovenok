@@ -2,38 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        
+
         # By default we are using here auth:api middleware
         $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
-        
+
     }
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function login(Request $request)
     {
-        $credentials = $request->only('username', 'password');
-        if (! $token = Auth::guard('api')->attempt($credentials)) {
-               return response()->json(['error' => 'Unauthorized'], 401);
+        $request->validate([
+            'username'=>'required|string',
+            'password'=>'required|min:6'
+        ]);
+
+        $user = User::where('username', $request->username)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response([
+                'message' => ['These credentials do not match our records.']
+            ], 404);
         }
 
-        return $this->respondWithToken($token);
-    }
+        $token = $user->createToken('sovenok')->plainTextToken;
 
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+
+        return response()->json($response,201);
+    }
     /**
      * Get the authenticated User.
      *
@@ -41,8 +53,8 @@ class AuthController extends Controller
      */
     public function me()
     {
-        # Here we just get information about current user
-        return response()->json(auth()->user());
+
+        return response()->json(Auth::user());
     }
 
     /**
@@ -64,7 +76,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        # When access token will be expired, we are going to generate a new one wit this function 
+        # When access token will be expired, we are going to generate a new one wit this function
         # and return it here in response
         return $this->respondWithToken(auth()->refresh());
     }

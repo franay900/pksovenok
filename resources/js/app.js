@@ -12,7 +12,7 @@ import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 
 import { definePreset } from '@primevue/themes';
-
+import axios from 'axios';
 
 const app = createApp(App);
 
@@ -44,9 +44,9 @@ app.use(PrimeVue, {
         preset: MyPreset,
         options: {
             darkModeSelector: '.app-dark',
-            
+
         }
-    }, 
+    },
     locale: {
         dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         dayNamesShort: ["Пон", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -72,3 +72,16 @@ app.use(ConfirmationService);
 
 app.use(store);
 app.mount('#app');
+
+axios.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    if(error.response.status === 401) {
+        router.push({name: 'login'})
+    }
+
+    if(error.response.status === 403){
+        router.push(({name: 'access'}))
+    }
+    return Promise.reject(error);
+});

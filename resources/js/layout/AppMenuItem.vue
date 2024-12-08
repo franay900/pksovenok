@@ -63,7 +63,7 @@ function itemClick(event, item) {
     setActiveMenuItem(foundItemKey);
 }
 
-function checkActiveRoute(item) {
+const checkActiveRoute = item => {
     return `/${route.path.split('/')[1]}` === item.to.fullPath;
 }
 

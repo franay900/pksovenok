@@ -16,7 +16,7 @@ class PermissionMiddleware
      */
     public function handle(Request $request, Closure $next, $permissionKey): Response
     {
-        if(!JWTAuth::parseToken()->authenticate()->hasPermission($permissionKey)){
+        if(!auth()->user()->hasPermission($permissionKey)){
             abort(403);
         }
         return $next($request);

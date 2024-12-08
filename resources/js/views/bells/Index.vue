@@ -2,7 +2,7 @@
 
 
 export default {
-   
+
 
     mounted(){
         this.$store.dispatch('getBells')
@@ -18,14 +18,13 @@ export default {
 <template>
     <div  class="card flex flex-col gap-4">
         <div class="font-semibold text-xl">Расписание звонков</div>
-        
+
         <div v-if="!bells" class="card flex flex-col gap-4">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
 
         </div>
-        <DataTable v-if="bells" v-model:selection="selectedUser"  :value="bells" sortMode="multiple" tableStyle="min-width: 50rem" >
-            <Column selectionMode="multiple" style="" :exportable="false" >
-            </Column>
+        <DataTable v-if="bells"   :value="bells"  tableStyle="min-width: 50rem" >
+
             <Column field="id" header="id" sortable style="width: 5%"  :hidden="true"></Column>
             <Column field="name" header="Наименование" sortable ></Column>
             <Column field="id" header="Учебная неделя" sortable  ></Column>

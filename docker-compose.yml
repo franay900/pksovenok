@@ -17,37 +17,38 @@ services:
       - .:/var/www # Монтируем локальную папку в контейнер как /var/www
       - ./docker/backend/php.ini:/usr/local/etc/php/php.ini
     depends_on:
-      - db
+      - postgres
+    networks:
+        - db
+  postgres:
+      image: postgres:13.3
+      environment:
+          POSTGRES_DB: laravel
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: test_laravel
+      ports:
+          - 5432:5432
 
-    # MySQL контейнер
-  db:
-    image: mysql:8.0
-    restart: always
-    volumes:
-      - ./tmp/db:/var/lib/mysql
-    environment:
-        MYSQL_DATABASE: lardocker
-        MYSQL_ROOT_PASSWORD: root
-    ports:
-      - 8101:3306
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-    container_name: project_db
-
+      networks:
+          - db
+      volumes:
+          - pg_data:/var/lib/postgresql/data
   # Nginx контейнер для вебсервера
   nginx:
     # Используем готовый образ для nginx контейнера
     image: nginx:alpine
     restart: unless-stopped
     tty: true
-    
+
     ports:
       - "80:80" # Внутренний порт контейнера пробрасываем на host машину
     volumes:
-      - .:/var/www/vendor # Монтируем локальную папку в контейнер как /var/www
+      - .:/var/www/ # Монтируем локальную папку в контейнер как /var/www
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/ # Передаем в контейнер конфигурационные файлы nginx
     depends_on:
       - backend
-
+    networks:
+        - db
 
   # Для сборки js
   node:
@@ -61,3 +62,11 @@ services:
     volumes:
         - .:/var/www # Монтируем локальную папку в контейнер как /var/www
 
+
+
+networks:
+    db:
+        driver: bridge
+
+volumes:
+    pg_data:

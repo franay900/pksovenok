@@ -17,7 +17,7 @@ const model = ref([
             { label: 'Сотрудники', icon: 'pi pi-fw pi-id-card', to:  router.resolve({name: 'users.index'}) },
             { label: 'Ученики', icon: 'pi pi-fw pi-check-square', to: router.resolve({name: 'student.index'}) },
 
-        
+
         ]
     },
 
@@ -30,57 +30,23 @@ const model = ref([
             { label: 'Периоды', icon: 'pi pi-fw pi-calendar', to: router.resolve({name: 'periods.index'}) },
             { label: 'Классы', icon: 'pi pi-fw pi-folder', to: router.resolve({name: 'class.index'}) },
             { label: 'Нагрузка', icon: 'pi pi-fw pi-th-large', to: router.resolve({name: 'load.index'}) },
-            { label: 'Расписание', icon: 'pi pi-fw pi-calendar-times', to: '/uikit/input' },
-  
-        
+            { label: 'Расписание', icon: 'pi pi-fw pi-calendar-times', to: router.resolve({name: 'timetable.index'}) },
+
+
         ]
     },
     {
-        label: 'Pages',
+        label: 'Журналы',
         icon: 'pi pi-fw pi-briefcase',
-        to: '/pages',
+        to: '/journal/',
         items: [
             {
-                label: 'Landing',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
+                label: 'Журнал организации',
+                icon: 'pi pi-fw pi-book',
+                to: router.resolve({name: 'journal.organization'})
             },
-            {
-                label: 'Auth',
-                icon: 'pi pi-fw pi-user',
-                items: [
-                    {
-                        label: 'Login',
-                        icon: 'pi pi-fw pi-sign-in',
-                        to: '/auth/login'
-                    },
-                    {
-                        label: 'Error',
-                        icon: 'pi pi-fw pi-times-circle',
-                        to: '/auth/error'
-                    },
-                    {
-                        label: 'Access Denied',
-                        icon: 'pi pi-fw pi-lock',
-                        to: '/auth/access'
-                    }
-                ]
-            },
-            {
-                label: 'Crud',
-                icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
-            },
-            {
-                label: 'Not Found',
-                icon: 'pi pi-fw pi-exclamation-circle',
-                to: '/pages/notfound'
-            },
-            {
-                label: 'Empty',
-                icon: 'pi pi-fw pi-circle-off',
-                to: '/pages/empty'
-            }
+
+
         ]
     },
 

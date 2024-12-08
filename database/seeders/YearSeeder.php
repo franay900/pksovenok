@@ -15,8 +15,8 @@ class YearSeeder extends Seeder
     {
         Year::create([
             'name' => '2024/2025 учебный год',
-            'begin' => '01.09.2024',
-            'end' => '31.05.2024'
+            'begin' => '2024-09-01',
+            'end' => '2025-06-01',
         ]);
     }
 }

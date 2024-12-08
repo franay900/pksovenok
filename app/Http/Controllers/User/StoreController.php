@@ -17,14 +17,14 @@ class StoreController extends Controller
 
     public function __invoke(StoreRequest $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $organizationId = $user->organization_id;
         $usernameExists = User::where('username', $request->username)->exists();
         if ($usernameExists){
             return response()->json([
-                
+
                 'username'    => 'Пользователь с таким логином уже существует',
-              
+
             ], 422);
         }
         $data = $request->validated();
@@ -39,7 +39,7 @@ class StoreController extends Controller
             'password' => bcrypt($password)
         ]);
 
-        
+
         $user->roles()->attach($roles);
         return response([$password]);
     }
