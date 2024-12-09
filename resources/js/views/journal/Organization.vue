@@ -13,7 +13,8 @@ export default {
             selectedLoad: null,
             selectedPeriod: null,
             lessons: [],
-            monthData: []
+            monthData: [],
+            students: []
         }
     },
 
@@ -43,6 +44,7 @@ export default {
                 .then(res => {
                     this.lessons = res.data.data.slice(0,12)
                     this.calculateMonths()
+                    this.getStudents()
                 })
         },
         calculateMonths() {
@@ -76,6 +78,13 @@ export default {
             // массив названий месяцев
             return ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"][month - 1];
         },
+
+        getStudents(){
+            axios.get(`/api/students/${this.selectedGroup.id}`)
+                .then(res => {
+                    this.students = res.data.data
+                })
+        }
     },
 
 
@@ -95,7 +104,7 @@ export default {
         <div class="font-semibold text-xl">Журнал</div>
         <div class="flex ">
             <Select  v-model="selectedGroup" :options="groups" optionLabel="group_name" placeholder="Выберите класс" class="mr-3 md:w-56"  @change="getLoads()" />
-            <Select  v-model="selectedLoad" :options="loads" optionLabel="subject_name" placeholder="Выберите предмет" class="mr-3 md:w-56"  @change="getLoads($event)" />
+            <Select  v-model="selectedLoad" :options="loads" optionLabel="subject_name" placeholder="Выберите предмет" class="mr-3 md:w-56" />
             <Select  v-model="selectedPeriod" :options="periods" optionLabel="name" placeholder="Выберите период" class="mr-3 md:w-56"  @change="getLoads($event)" />
             <Button @click="getLessons" label="Загрузить" icon="pi pi-arrow-circle-down" severity="secondary" class="mr-2" />
         </div>
@@ -136,9 +145,9 @@ export default {
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="num">1</td>
-            <td class="td_fio" >Иванов Иван</td>
+        <tr v-for="(student, index) in students">
+            <td class="num">{{ index+1 }}</td>
+            <td class="td_fio" >{{ student.user.name }}</td>
             <td class="mark" ><input class="edit_mark" type="text"></td>
             <td class="mark">
                 <div class="mark-container">

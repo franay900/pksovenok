@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\TimetableLessonController;
 use Illuminate\Http\Request;
@@ -69,4 +70,8 @@ Route::get('groups/loads/{group}', [GroupController::class, 'getGroupLoads'])->m
 
 Route::group(['prefix' => 'lessons', 'middleware' => 'auth:sanctum'], function(){
    Route::get('/{group}/{load}/{period}', [LessonController::class, 'index']);
+});
+
+Route::group(['prefix' => 'students', 'middleware' => 'auth:sanctum'], function(){
+    Route::get('/{group}', [StudentController::class, 'index']);
 });
