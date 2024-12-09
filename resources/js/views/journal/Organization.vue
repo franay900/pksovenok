@@ -33,9 +33,18 @@ export default {
             axios.get(`/api/groups/loads/${this.selectedGroup.id}`)
                 .then(res => {
                     this.loads = res.data.data
+
+                })
+        },
+        getLessons(){
+            axios.get(`/api/lessons/${this.selectedGroup.id}/${this.selectedLoad.id}/${this.selectedPeriod.id}`)
+                .then(res => {
+                    console.log(res.data.data)
                 })
         }
     },
+
+
 
     mounted() {
 
@@ -54,7 +63,7 @@ export default {
             <Select  v-model="selectedGroup" :options="groups" optionLabel="group_name" placeholder="Выберите класс" class="mr-3 md:w-56"  @change="getLoads()" />
             <Select  v-model="selectedLoad" :options="loads" optionLabel="subject_name" placeholder="Выберите предмет" class="mr-3 md:w-56"  @change="getLoads($event)" />
             <Select  v-model="selectedPeriod" :options="periods" optionLabel="name" placeholder="Выберите период" class="mr-3 md:w-56"  @change="getLoads($event)" />
-            <Button label="Загрузить" icon="pi pi-arrow-circle-down" severity="secondary" class="mr-2" @click="visible = true" />
+            <Button @click="getLessons" label="Загрузить" icon="pi pi-arrow-circle-down" severity="secondary" class="mr-2" />
         </div>
 
     </div>
