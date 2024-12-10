@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    
+
     protected static ?string $password;
 
     /**
@@ -21,12 +21,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $username = 'admin';
+
         $password = Hash::make('123456');
-        
+
         return [
             'name' => fake()->name(),
-            'username' => $username,
+            'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => $password,

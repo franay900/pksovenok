@@ -12,6 +12,9 @@ export default {
             selectedGroup: null,
             selectedLoad: null,
             selectedPeriod: null,
+            lessons: [],
+            monthData: [],
+            students: []
         }
     },
 
@@ -33,9 +36,58 @@ export default {
             axios.get(`/api/groups/loads/${this.selectedGroup.id}`)
                 .then(res => {
                     this.loads = res.data.data
+
+                })
+        },
+        getLessons(){
+            axios.get(`/api/lessons/${this.selectedGroup.id}/${this.selectedLoad.id}/${this.selectedPeriod.id}`)
+                .then(res => {
+                    this.lessons = res.data.data.slice(0,12)
+                    this.calculateMonths()
+                    this.getStudents()
+                })
+        },
+        calculateMonths() {
+            const months = {};
+            this.lessons.forEach(lesson => {
+                const date = new Date(lesson.date);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1; // Месяц (1-12)
+                const monthName = this.getMonthName(month);
+                const key = `${year}-${month}`;
+
+                months[key] = months[key] ? months[key] + 1 : 1;
+            });
+
+            // Преобразуем map в массив объектов
+            this.monthData = Object.entries(months).map(([key, value]) => {
+                const [year, month] = key.split('-');
+                return {
+                    year: parseInt(year),
+                    month: parseInt(month),
+                    name: this.getMonthName(parseInt(month)),
+                    lessonCount: value, // Количество уроков в этом месяце
+                };
+            });
+        },
+
+        daysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        },
+        getMonthName(month) {
+            // массив названий месяцев
+            return ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"][month - 1];
+        },
+
+        getStudents(){
+            axios.get(`/api/students/${this.selectedGroup.id}`)
+                .then(res => {
+                    this.students = res.data.data
                 })
         }
     },
+
+
 
     mounted() {
 
@@ -52,13 +104,14 @@ export default {
         <div class="font-semibold text-xl">Журнал</div>
         <div class="flex ">
             <Select  v-model="selectedGroup" :options="groups" optionLabel="group_name" placeholder="Выберите класс" class="mr-3 md:w-56"  @change="getLoads()" />
-            <Select  v-model="selectedLoad" :options="loads" optionLabel="subject_name" placeholder="Выберите предмет" class="mr-3 md:w-56"  @change="getLoads($event)" />
+            <Select  v-model="selectedLoad" :options="loads" optionLabel="subject_name" placeholder="Выберите предмет" class="mr-3 md:w-56" />
             <Select  v-model="selectedPeriod" :options="periods" optionLabel="name" placeholder="Выберите период" class="mr-3 md:w-56"  @change="getLoads($event)" />
-            <Button label="Загрузить" icon="pi pi-arrow-circle-down" severity="secondary" class="mr-2" @click="visible = true" />
+            <Button @click="getLessons" label="Загрузить" icon="pi pi-arrow-circle-down" severity="secondary" class="mr-2" />
         </div>
 
     </div>
     <div  class="card flex flex-col gap-4">
+
 
 
     <table>
@@ -66,23 +119,15 @@ export default {
         <tr>
             <td class="number" rowspan="3">№</td>
             <td class="fio" rowspan="3">Фамилия, Имя</td>
-            <td class="month" colspan="8">Январь</td>
-            <td class="month" colspan="4">Февраль</td>
+            <td v-for="month in monthData"  class="month" :colspan="month.lessonCount">{{ month.name }}</td>
+
             <td class="sball" rowspan="3">Средений балл</td>
             <td class="itog" rowspan="3">1 полугодие</td>
         </tr>
         <tr class="dates" >
-            <td class="date">1</td>
-            <td class="date">2</td>
-            <td class="date">3</td>
-            <td class="date">4</td>
-            <td class="date" colspan="2">5</td>
-            <td class="date">6</td>
-            <td class="date">7</td>
-            <td class="date">8</td>
-            <td class="date">9</td>
-            <td class="date">10</td>
-            <td class="date">11</td>
+
+            <td v-for="lesson in lessons"  class="date">{{ lesson.date.split('-')[2] }}</td>
+
         </tr>
         <tr>
             <td class="type_lessons">О</td>
@@ -100,9 +145,9 @@ export default {
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="num">1</td>
-            <td class="td_fio" >Иванов Иван</td>
+        <tr v-for="(student, index) in students">
+            <td class="num">{{ index+1 }}</td>
+            <td class="td_fio" >{{ student.user.name }}</td>
             <td class="mark" ><input class="edit_mark" type="text"></td>
             <td class="mark">
                 <div class="mark-container">
